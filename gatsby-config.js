@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
     title: `RailsMojo`,
-    siteUrl: `https://www.yourdomain.tld`
+    siteUrl: `https://www.railsmojo.org`
   },
   plugins: [
     {
@@ -26,6 +26,13 @@ module.exports = {
         "path": "./src/pages/"
       },
       __key: "pages"
+    },
+    {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        "name": "blog",
+        "path": `${__dirname}/blog`
+      },
     },
     "gatsby-plugin-image",
     "gatsby-plugin-sharp",
