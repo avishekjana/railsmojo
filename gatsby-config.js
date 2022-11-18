@@ -1,7 +1,8 @@
 module.exports = {
   siteMetadata: {
     title: `RailsMojo`,
-    siteUrl: `https://www.railsmojo.org`
+    siteUrl: `https://www.railsmojo.org`,
+    defaultRailsVersion: 6
   },
   plugins: [
     {
@@ -28,11 +29,16 @@ module.exports = {
       __key: "pages"
     },
     {
-      resolve: 'gatsby-source-filesystem',
+      resolve: `gatsby-source-git`,
       options: {
-        "name": "blog",
-        "path": `${__dirname}/blog`
-      },
+        name: `content-repo`,
+        remote: `https://github.com/railsmojo/railsmojo-content.git`,
+        // Specify the local checkout location, to avoid it being trashed on
+        // cache clears.
+        branch: `master`,
+        // Multiple patterns and negation supported. See https://github.com/mrmlnc/fast-glob
+        // patterns: [`*.mdx`]
+      }
     },
     "gatsby-plugin-image",
     "gatsby-plugin-sharp",
