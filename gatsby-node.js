@@ -3,13 +3,20 @@ const path = require("path")
 exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions
 
-  const result = await graphql(`
+  // Query our pages from the GraphQL server
+  const mdxPages = await getMdxPages({graphql, reporter})
+  await createIndividualMdxPages({ mdxPages, actions });
+}
+
+async function getMdxPages({ graphql, reporter }) {
+  const graphqlResult = await graphql(`
     query {
       allMdx {
         nodes {
           id
           frontmatter {
             slug
+            category
             railsVersion
           }
           internal {
@@ -20,24 +27,37 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     }
   `)
 
-  if (result.errors) {
-    reporter.panicOnBuild('Error loading MDX result', result.errors)
+  if (graphqlResult.errors) {
+    reporter.panicOnBuild(
+      `There was an error loading your events`,
+      graphqlResult.errors
+    )
+    return
   }
+  return graphqlResult.data.allMdx.nodes
+}
 
-  // Create blog post pages.
-  const posts = result.data.allMdx.nodes
-  // console.log(posts);
-  // you'll call `createPage` for each result
-  posts.forEach(node => {
-    createPage({
-      // As mentioned above you could also query something else like frontmatter.title above and use a helper function
-      // like slugify to create a slug
-      path: node.frontmatter.slug,
-      // Provide the path to the MDX content file so webpack can pick it up and transform it into JSX
-      component: node.internal.contentFilePath,
-      // You can use the values in this context in
-      // our page layout component
-      context: { id: node.id, railsVersion: node.frontmatter.railsVersion },
+
+/**
+ * This function creates all pages in this site
+ */
+ const createIndividualMdxPages = async ({ mdxPages, actions }) => {
+  console.log(mdxPages)
+  mdxPages.forEach(node => {
+    // createPage is an action passed to createPages
+    // See https://www.gatsbyjs.com/docs/actions#createPage for more info
+    actions.createPage({
+      // Use the WordPress uri as the Gatsby page path
+      // This is a good idea so that internal links and menus work 👍
+      path: `/${node.frontmatter.category}/rails-${node.frontmatter.railsVersion}/${node.frontmatter.slug}`,
+
+      // use the blog post template as the page component
+      // component: path.resolve(`./src/templates/blog-post.js`),
+      // component: node.internal.contentFilePath,
+      component: path.resolve("./src/templates/mdxPageTemplate.js"),
+      // `context` is available in the template as a prop and
+      // as a variable in GraphQL.
+      context: { id: node.id, railsVersion: node.frontmatter.railsVersion }
     })
   })
 }

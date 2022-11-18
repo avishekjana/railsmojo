@@ -1,8 +1,10 @@
 import * as React from 'react'
 import { graphql } from 'gatsby'
 
-import Layout from '../../../components/layout'
-import Seo from '../../../components/seo'
+// import Layout from '../../src/components/layout'
+import Layout from '../components/layout'
+import Seo from '../components/seo'
+// import Seo from '../../src/components/seo'
 
 const BlogPost = ({ data, children }) => {
   return (

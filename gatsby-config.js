@@ -2,7 +2,7 @@ module.exports = {
   siteMetadata: {
     title: `RailsMojo`,
     siteUrl: `https://www.railsmojo.org`,
-    defaultRailsVersion: 6
+    defaultRailsVersion: 7
   },
   plugins: [
     {
